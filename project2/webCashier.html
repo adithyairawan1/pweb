@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Cashier</h1>
+<p>Coffee Price : Rp 20.000</p>
+<p>Tea Price : Rp 15.000</p>
+<br>
+
+<p>Input your order</p>
+
+<form>
+Product 		:<input type="name" name="nameProduct" id="nameProduct">
+<br><br>
+price 			:<input type="number" name="priceProduct" id="priceProduct" onkeyup="cal(this.form)"><br><br>
+Number Of Item 	:<input type="number" name="numberItem" id="numberItem" onkeyup="cal(this.form)"><br><br>
+Total 			:<input type="number" name="total" id="total" onkeyup="cal(this.form)"><br><br>
+</form>
+<button id="submit" onclick="addData()">submit</button>
+
+<p>Add new item</p>
+<br>
+<form>
+<input type="name" name="newNameProduct" id="newNameProduct">Product</input>
+<br><br>
+<input type="number" name="newPriceProduct" id="newPriceProduct">Price</input><br><br>
+</form>
+<button onclick="addItem()">add</button>
+
+<p>click on this table to input data</p>
+
+<table id="myTable">
+	<tr>
+	<td>Item Name</td>
+		<td>Item Price</td>
+</tr>
+</table>
+
+<br>
+
+<form>
+	Total Price : 
+		<input type="number" id ="totalprice" name="totalprice" onKeyUp="calcd(this.form)" placeholder="Total Price" disabled="disabled">
+	Discount :
+		<input type="number" id ="discount" name="discount" onKeyUp="calcd(this.form)" placeholder="Discount(Percentage)">
+	Total Price(After Discount) : 
+		<input type="number" id ="totalpriced" name="totalpriced" onKeyUp="calcd(this.form)" placeholder="Total Price Discount" disabled="disabled">
+	Payment : 
+		<input type="number" id ="payment" name="payment" onKeyUp="calcd(this.form)" placeholder="Payment"><br>
+	Change : 
+		<input type="number" id ="change" name="change" onKeyUp="calcd(this.form)" placeholder="Change" readonly="readonly">
+</form> 
+
+<table id="mySecondTable">
+	<tr>
+	<td>No</td>	
+		<td>Item Name</td>
+			<td>Price per Unit</td>
+				<td>Amount</td>>
+					<td>Item Total Price</td>
+</tr>
+</table>
+
+
+
+
+
+<script>
+
+	var a=1, x=0;
+	 	var ar = [["coffee",20000],
+                     ["tea",15000]],
+        	table = document.getElementById("myTable");
+
+         for(var i = 0; i < ar.length; i++)
+           {
+               // create a new row
+               var newRow = table.insertRow(-1);
+               for(var j = 0; j < ar[i].length; j++)
+               {
+                   // create a new cell
+                 
+                   var cell = newRow.insertCell(-1);
+                   
+                   // add value to the cell
+                   cell.innerHTML = ar[i][j];
+               }
+
+           }
+
+	selectTable()
+
+	function selectTable()
+        {
+        	for(var i = 0; i < ar.length; i++)
+           {
+           		table.rows[i+1].onclick = function()
+                    {
+                         
+                       document.getElementById("nameProduct").value = this.cells[0].innerHTML;
+                       document.getElementById("priceProduct").value = this.cells[1].innerHTML;
+                    };
+           }
+           
+        }
+    function checkEmptyInput(){	
+            var isEmpty = false,
+           		newNameProduct = document.getElementById("newNameProduct").value,
+                newPriceProduct = document.getElementById("newPriceProduct").value;
+
+                if(newNameProduct === ""){
+                    isEmpty = true;
+                }
+                else if(newPriceProduct === ""){
+                    isEmpty = true;
+                }
+                return isEmpty;
+        }
+    function addItem() {
+	 		if(!checkEmptyInput()){
+		      	var table = document.getElementById("myTable");
+		      	var row = table.insertRow(-1);
+		      	var cell1 = row.insertCell(0);
+		      	var cell2 = row.insertCell(1);
+		      	cell1.innerHTML = document.getElementById("newNameProduct").value;
+		        cell2.innerHTML = document.getElementById("newPriceProduct").value;
+		        if(cell2.innerHTML<0){
+		        	document.getElementById("myTable").deleteRow(-1);
+		        }
+		        else ar.push([cell1.innerHTML,cell2.innerHTML]);
+			    selectTable()
+		        document.getElementById("newNameProduct").value = "";
+			    document.getElementById("newPriceProduct").value = "";
+	     	}
+		}
+    function addData() {
+	      	var tableb = document.getElementById("mySecondTable");
+	      	var rowb = tableb.insertRow(-1);
+	      	var xell1 = rowb.insertCell(0), xell2 = rowb.insertCell(1), xell3 = rowb.insertCell(2), xell4 = rowb.insertCell(3), xell5 = rowb.insertCell(4);
+	      	xell1.innerHTML = a;
+	        xell2.innerHTML = document.getElementById("nameProduct").value;
+	        xell3.innerHTML = document.getElementById("priceProduct").value;
+	        xell4.innerHTML = document.getElementById("numberItem").value;
+	        xell5.innerHTML = document.getElementById("total").value;
+	        a++; 
+	        x += Number(xell5.innerHTML);
+	        if (xell2.innerHTML === "" || xell4.innerHTML === ""){
+	        	a--;
+	        	document.getElementById("mySecondTable").deleteRow(-1);
+	        }
+	        else document.getElementById("totalprice").value = x;
+		  	document.getElementById("nameProduct").value = "";
+	        document.getElementById("priceProduct").value = "";
+	        document.getElementById("numberItem").value = "";
+	        document.getElementById("total").value = "";
+	    }
+    function cal(theForm) {
+	      var price = parseFloat(theForm.priceProduct.value)
+		  if (isNaN(price)) price=0;
+		  var amount = parseFloat(theForm.numberItem.value)
+		  if (isNaN(amount)) amount=0;
+		  var total =  price * amount
+		  theForm.total.value=total.toFixed();
+		}
+
+     function calcd(theForm) {
+	      var pay = parseFloat(theForm.payment.value)
+		  if (isNaN(pay)) pay=0;
+		  var tp = parseFloat(theForm.totalprice.value)
+		  if (isNaN(tp)) tp=0;
+		  var dc = parseFloat(theForm.discount.value)
+		  if (isNaN(dc) | dc<0){
+		  	dc=0;
+		  	document.getElementById("discount").value = 0;
+		  }
+		  else if (dc>100) {
+		  	dc = 100;
+		  	document.getElementById("discount").value = 100;
+		  }
+		  var totalpriced = tp * ((100-dc)/100) 
+		  theForm.totalpriced.value=totalpriced.toFixed();
+		  var change = pay - totalpriced
+		  theForm.change.value=change.toFixed();
+		}
+
+</script>
+</body>
+</html>
